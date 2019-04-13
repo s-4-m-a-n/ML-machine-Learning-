@@ -1,0 +1,83 @@
+from numpy import *
+import matplotlib.pyplot as pt
+#######################################  for visualizing the data ##############################
+
+def scatter_plot(data):
+	x=[]
+	y=[]
+	for i in range(1,len(data)):
+		x.append(data[i,1])
+		y.append(data[i,2])
+	pt.scatter(x,y,color="RED")	
+
+def regression_plot(data,a0,a1,a2):
+	x=[]
+	y=[]
+	for i in range(1,len(data)):
+		x.append(i)
+		y.append(a0+a1*x[i-1]+a2*x[i-1]**2)
+
+	pt.plot(x,y)
+
+
+def plot(data,a0,a1,a2):
+	scatter_plot(data)
+	regression_plot(data,a0,a1,a2)
+	pt.xlabel('position')
+	pt.ylabel('salary')
+	pt.show()
+
+####################################################################################################
+
+def gradient_step(data,Rate,a0,a1,a2):
+
+	current_a0,current_a1,current_a2=a0,a1,a2
+	a0_gradient,a1_gradient,a2_gradient=0,0,0
+	N=len(data)
+	R=Rate
+
+	for i in range(N):
+		x=data[i,1]
+		y=data[i,2]
+		a0_gradient+=(current_a0+current_a1*x+current_a2*x**2-y)
+		a1_gradient+=(current_a0+current_a1*x+current_a2*x**2-y)*x
+		a2_gradient+=(current_a0+current_a1*x+current_a2*x**2-y)*x**2
+
+	new_a0=current_a0-(R/N)*a0_gradient
+	new_a1=current_a1-(R/N)*a1_gradient
+	new_a2=current_a2-(R/N)*a2_gradient
+
+	return new_a0,new_a1,new_a2
+
+def gradient_descent(data,a0,a1,a2,iteration,learning_rate):
+
+	for i in range(iteration):
+		a0,a1,a2=gradient_step(data,learning_rate,a0,a1,a2)
+
+		print(f"a0={a0} a1={a1} and a2={a2}")
+
+	return a0,a1,a2	
+
+def run():
+	points=genfromtxt('polynomial regression data set.csv',dtype=int,delimiter=',')
+	initial_a0=0.00
+	initial_a1=0.00
+	initial_a2=0.00
+	iteration=100
+	learning_rate=0.0001
+
+	a0,a1,a2=gradient_descent(points,initial_a0,initial_a1,initial_a2,iteration,learning_rate)
+
+	print(f"a0={a0},a1={a1} and a2={a2}")
+
+	plot(points,a0,a1,a2)
+
+
+
+
+
+
+
+
+if __name__=="__main__":
+	run()

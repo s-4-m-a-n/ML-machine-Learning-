@@ -1,0 +1,57 @@
+from numpy import *
+from fit_regressionLine import *
+
+
+def gradient_step(data,a0,a1,a2,rate):
+	current_a0=a0
+	current_a1=a1
+	current_a2=a2
+
+	a0_gradient=0
+	a1_gradient=0
+	a2_gradient=0
+	R=rate
+	N=len(data)
+
+	for i in range(N):
+		x1=data[i,1]
+		x2=data[i,2]
+		x3=data[i,3]
+
+		a0_gradient+=(current_a0+current_a1*x1+current_a2*x2)-x3
+		a1_gradient+=((current_a0+current_a1*x1+current_a2*x2)-x3)*x1
+		a2_gradient+=((current_a0+current_a1*x1+current_a2*x2)-x3)*x2
+	new_a0=current_a0-(R/N)*a0_gradient
+	new_a1=current_a1-(R/N)*a1_gradient
+	new_a2=current_a2-(R/N)*a2_gradient
+
+	return new_a0,new_a1,new_a2
+
+
+
+
+def gradient_descent(data,a0,a1,a2,iteration,rate):
+	for i in range(iteration):
+		a0,a1,a2=gradient_step(data,a0,a1,a2,rate)
+
+	return a0,a1,a2
+
+
+def run():
+	points=loadtxt('multiple regression data set.txt',dtype=int,delimiter=',')
+	initial_a0=0.00
+	initial_a1=0.00
+	initial_a2=0.00
+	iteration=1000
+	learning_rate=0.0001
+	a0,a1,a2=gradient_descent(points,initial_a0,initial_a1,initial_a2,iteration,learning_rate)
+
+	print(f"a0={a0} ,a1={a1} and a2={a2}")
+
+	plot_3Dregression(points,a0,a1,a2)
+
+
+
+
+if __name__=="__main__":
+	run()
